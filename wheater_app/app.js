@@ -1,5 +1,6 @@
 const yargs = require('yargs');
 const geocode = require('./geocode.js');
+const wheather = require('./wheater.js');
 
 const argv = yargs
     .options({
@@ -18,5 +19,15 @@ geocode.fetchGeocode(argv.address, (errorMessage, results) => {
         console.log(errorMessage);
     } else {
         console.log(JSON.stringify(results, undefined, 2));
+        wheather.getWheater(results.latitude, results.longitude, (errorMessage, results) => {
+            if (errorMessage) {
+                console.log(errorMessage);
+            } else {
+                console.log(JSON.stringify(results, undefined, 2));
+            }
+        });
     }
 });
+
+
+ 

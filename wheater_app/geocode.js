@@ -7,7 +7,7 @@ var fetchGeocode = (address, callback) => {
         json: true
     }, (error, response, body) => {
         if (error) {
-            callback('Unable to connect to server');
+            callback('Unable to connect to geocode server');
         } else if (body.status === 'ZERO_RESULTS') {
             callback('Unable to find that address');
         } else if (body.status === 'OK') {
