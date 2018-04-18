@@ -1,12 +1,15 @@
 const expect = require('expect');
 const request = require('supertest');
+const {ObjectID} = require('mongodb');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
 const todos = [{
+    _id: new ObjectID(),
     text: 'first todo'
 }, {
+    _id: new ObjectID(),
     text: 'another todo'
 }];
 
@@ -43,7 +46,7 @@ describe('POST /todos', () => {
             })
     })
 
-     it('should not create a new todo', (done) => {
+    it('should not create a new todo', (done) => {
         request(app)
             .post('/todos')
             .send({})
@@ -70,6 +73,41 @@ describe('GET /todos', () => {
             .expect(200)
             .expect((res) => {
                 expect(res.body.todos.length).toBe(todos.length);
+            })
+            .end(done);
+    })
+});
+
+describe('GET /todos/:id', () => {
+    it('test get todo by id', (done) => {
+        var testId = todos[0]._id.toHexString();
+        request(app)
+            .get(`/todos/${testId}`)
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo._id).toBe(testId);
+                expect(res.body.todo.text).toBe(todos[0].text);
+            })
+            .end(done);
+    })
+
+    it('test get todo by invalid id', (done) => {
+        request(app)
+            .get('/todos/123asdad')
+            .expect(404)
+            .expect((res) => {
+                expect(res.body.error).toBe('invalid id');
+            })
+            .end(done);
+    })
+
+    it('test get todo by id not found', (done) => {
+        var testId = new ObjectID().toHexString();
+        request(app)
+            .get(`/todos/${testId}`)
+            .expect(404)
+            .expect((res) => {
+                expect(res.body.error).toBe('not found');
             })
             .end(done);
     })
