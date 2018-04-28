@@ -11,7 +11,7 @@ var authenticate = (req, res, next) => {
         req.token = token;
         next();
     }).catch((e) => {
-        res.status(404).send('not found');
+        res.status(401).send({error: 'not authenticated'});
     })
 }
 
